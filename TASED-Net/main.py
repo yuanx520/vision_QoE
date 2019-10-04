@@ -6,6 +6,9 @@ import torch
 from model import TASED_v2
 from scipy.ndimage.filters import gaussian_filter
 import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('TkAgg')
+import yaml
 
 def main():
     ''' read frames in path_indata and generate frame-wise saliency maps in path_output '''
@@ -24,7 +27,6 @@ def main():
     file_weight = os.path.join(model_path, 'TASED_v2.pt')
 
     model = TASED_v2()
-
     # load the weight file and copy the parameters
     if os.path.isfile(file_weight):
         print ('loading weight file')
@@ -66,18 +68,18 @@ def main():
             snippet = []
             for i in range(len(list_frames)):
                 img = cv2.imread(os.path.join(path_indata, dname, list_frames[i]))
-                # img = cv2.resize(img, (384, 224))
+                img = cv2.resize(img, (384, 224))
                 img = img[...,::-1]
                 snippet.append(img)
 
                 if i >= len_temporal-1:
                     clip = transform(snippet)
 
-                    process(model, clip, path_outdata, i)
+                    process(model, clip, path_outdata, i, snippet[-1])
 
                     # process first (len_temporal-1) frames
                     if i < 2*len_temporal-2:
-                        process(model, torch.flip(clip, [1]), path_outdata, i-len_temporal+1)
+                        process(model, torch.flip(clip, [1]), path_outdata, i-len_temporal+1, snippet[-1])
 
                     del snippet[0]
 
@@ -94,14 +96,20 @@ def transform(snippet):
     return snippet.view(1,-1,3,snippet.size(1),snippet.size(2)).permute(0,2,1,3,4)
 
 
-def process(model, clip, path_outdata, idx):
+def process(model, clip, path_outdata, idx, ori):
     ''' process one clip and save the predicted saliency map '''
     with torch.no_grad():
         smap = model(clip.cuda()).cpu().data[0]
 
     smap = (smap.numpy()*255.).astype(np.int)/255.
     smap = gaussian_filter(smap, sigma=7)
-    import pdb; pdb.set_trace()
+    plt.ion()
+    plt.axis("off")
+    plt.imshow(ori)
+    plt.imshow((smap/np.max(smap)*255.).astype(np.uint8), cmap='jet', alpha=0.5)
+    plt.show()
+    plt.pause(1)
+    plt.close()
     cv2.imwrite(os.path.join(path_outdata, '%04d.png'%(idx+1)), (smap/np.max(smap)*255.).astype(np.uint8))
 
 

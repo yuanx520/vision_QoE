@@ -1,0 +1,27 @@
+data:
+  base_path: /data2/yuanx/QoEData/SQoE-III/videos/mp4
+  quailty_index: '07'
+  video_suffix: mp4
+  video_list:
+    - BigBuckBunny
+    # - CSGO
+    - CostaRica
+    - FrozenBanff
+    - PuppiesBath
+    - RushHour
+    - SlideEditing
+    - TearsOfSteel1
+    - TrafficAndBuilding
+    - Valentines
+    - BirdOfPrey
+    - Cheetah
+    - FCB
+    - Mtv
+    - RoastDuck
+    - Ski
+    - TallBuildings
+    - TearsOfSteel2
+    - Transformer
+    - ZapHighlight
+model_path: /data2/yuanx/QoEData/sailency-models/SalGan/models/gan_torch_model.pkl
+output_path: /data2/yuanx/QoEData/sailency-models/SalGan/SQoE-III-static/

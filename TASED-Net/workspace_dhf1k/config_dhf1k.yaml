@@ -1,0 +1,6 @@
+data:
+  base_path: /data2/yuanx/QoEData/DHF1K/videos
+  video_suffix: AVI
+  video_list: 701
+model_path: /data2/yuanx/QoEData/sailency-models/TASED-Net/models/
+output_path: /data2/yuanx/QoEData/sailency-models/TASED-Net/DHF1K/
