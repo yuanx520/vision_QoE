@@ -128,5 +128,5 @@ dmypy.json
 *.mp4
 *.png
 *.jpg
-
-data/*
+*.mat
+*.txt
