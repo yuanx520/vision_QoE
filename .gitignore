@@ -130,3 +130,6 @@ dmypy.json
 *.jpg
 *.mat
 *.txt
+*.pickle
+*.npy
+*.pkl

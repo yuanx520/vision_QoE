@@ -18,6 +18,7 @@ import os
 from py_baseline_QoE_models import Liu2015QoE
 import itertools
 from sklearn.linear_model import LinearRegression
+import pickle
 
 sourceVideo = sio.loadmat('sourceVideo.mat', struct_as_record=0, squeeze_me=1);
 actualBitrate = sio.loadmat('actualBitrate.mat', struct_as_record=0, squeeze_me=1);
@@ -37,8 +38,8 @@ train_features = []
 test_features = []
 train_features_reweighting = []
 test_features_reweighting = []
-# for iii in range(len(sourceNames)):
-for iii in range(1):
+for iii in range(len(sourceNames)):
+    print(f"process{sourceNames[iii]}")
     representations = sio.loadmat(f'representations/{sourceNames[iii]}.mat', struct_as_record=0, squeeze_me=1);
     representations = representations['representation']
     streamInfo = sio.loadmat(f'streamInfo/{sourceNames[iii]}.mat', struct_as_record=0, squeeze_me=1);
@@ -133,7 +134,7 @@ for iii in range(1):
         # import pdb; pdb.set_trace()
         count += 1
     offset += len(Q_1)
-# import pdb; pdb.set_trace()
+import pdb; pdb.set_trace()
 train_features_reweighting = np.asarray(train_features_reweighting)
 train_features = np.asarray(train_features)
 test_features_reweighting = np.asarray(test_features_reweighting)
@@ -148,9 +149,33 @@ reg_reweighting = LinearRegression().fit(train_features_reweighting, train_mos)
 
 fig, ax = plt.subplots(nrows=2, ncols=1)
 ax[0].scatter(reg.predict(train_features), train_mos)
+ax[0].set_xlim(0, 100)
+ax[0].set_ylim(0, 100)
 ax[1].scatter(reg_reweighting.predict(train_features_reweighting), train_mos)
+ax[1].set_xlim(0, 100)
+ax[1].set_ylim(0, 100)
 fig.savefig('train.png')
+fig.cla()
 print(scipy.stats.spearmanr(reg.predict(train_features), train_mos), "VS", scipy.stats.spearmanr(reg_reweighting.predict(train_features_reweighting), train_mos))
 
-# analysis
-# plt.
+fig, ax = plt.subplots(nrows=2, ncols=1)
+ax[0].scatter(reg.predict(test_features), test_mos)
+ax[0].set_xlim(0, 100)
+ax[0].set_ylim(0, 100)
+ax[1].scatter(reg_reweighting.predict(test_features_reweighting), test_mos)
+ax[1].set_xlim(0, 100)
+ax[1].set_ylim(0, 100)
+fig.savefig('test.png')
+fig.cla()
+print(scipy.stats.spearmanr(reg.predict(test_features), test_mos), "VS", scipy.stats.spearmanr(reg_reweighting.predict(test_features_reweighting), test_mos))
+
+feature_mos_all_dict = {
+"train_features": train_features,
+"train_features_reweighting": train_features_reweighting,
+"train_mos": train_mos,
+"test_features": test_features,
+"test_features_reweighting": test_features_reweighting,
+"test_mos": test_mos,
+}
+with open('features_mos_all.pickle', 'wb') as handle:
+    pickle.dump(feature_mos_all_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)

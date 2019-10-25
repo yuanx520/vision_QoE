@@ -1,7 +1,7 @@
 data:
   base_path: /data2/yuanx/QoEData/SQoE-III/videos/mp4
   quailty_num:
-    # - 58
+    - 58
     - 61
     - 11
     - 11
@@ -23,7 +23,7 @@ data:
     - 11
   video_suffix: mp4
   video_list:
-    # - BigBuckBunny
+    - BigBuckBunny
     - BirdOfPrey
     - Cheetah
     - CostaRica
